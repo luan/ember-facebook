@@ -13,6 +13,7 @@
       window.fbAsyncInit = => @fbAsyncInit()
     
       $ ->
+        $('body').append($("<div>").attr('id', 'fb-root'))
         js = document.createElement 'script'
 
         $(js).attr

@@ -1,17 +1,24 @@
+## ==========================================================================
+## Project:  Ember Facebook
+## Copyright: ©2012 Luan Santos
+## License:   Licensed under MIT license (see LICENSE)
+## ==========================================================================
+
 ((exports) ->
   Ember.Facebook = Ember.Mixin.create
     FBUser: undefined
     appId: undefined
+    facebookParams: Ember.Object.create()
     fetchPicture: true
 
     init: ->
       @_super()
       window.FBApp = this
 
-    appIdChanged: (->
+    facebookConfigChanged: (->
       @removeObserver('appId')
       window.fbAsyncInit = => @fbAsyncInit()
-    
+
       $ ->
         $('body').append($("<div>").attr('id', 'fb-root'))
         js = document.createElement 'script'
@@ -22,14 +29,18 @@
           src: "//connect.facebook.net/en_US/all.js"
 
         $('head').append js
-    ).observes('appId')
+    ).observes('facebookParams', 'appId')
 
     fbAsyncInit: ->
-      FB.init
-        appId:  @get 'appId'
-        status: true
-        cookie: true
-        xfbml:  true
+      facebookParams = @get('facebookParams')
+      facebookParams = facebookParams.setProperties
+        appId:  @get 'appId' || facebookParams.get('appId') || undefined
+        status: facebookParams.get('status') || true
+        cookie: facebookParams.get('cookie') || true
+        xfbml: facebookParams.get('xfbml') || true
+        channelUrl: facebookParams.get('channelUrl') || undefined
+
+      FB.init facebookParams
 
       @set 'FBloading', true
       FB.Event.subscribe 'auth.authResponseChange', (response) => @updateFBUser(response)
@@ -38,8 +49,8 @@
     updateFBUser: (response) ->
       if response.status is 'connected'
           FB.api '/me', (user) =>
-            FBUser = user
-            FBUser.accessToken = response.authResponse.accessToken
+            FBUser = Ember.Object.create user
+            FBUser.set 'accessToken', response.authResponse.accessToken
 
             if @get 'fetchPicture'
               FB.api '/me/picture', (path) =>

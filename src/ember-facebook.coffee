@@ -15,6 +15,7 @@
       @_super()
       window.FBApp = this
 
+
     facebookConfigChanged: (->
       @removeObserver('appId')
       window.fbAsyncInit = => @fbAsyncInit()
@@ -48,29 +49,30 @@
 
     updateFBUser: (response) ->
       if response.status is 'connected'
-          FB.api '/me', (user) =>
-            FBUser = Ember.Object.create user
-            FBUser.set 'accessToken', response.authResponse.accessToken
+        FB.api '/me', (user) =>
+          FBUser = Ember.Object.create user
+          FBUser.set 'accessToken', response.authResponse.accessToken
 
-            if @get 'fetchPicture'
-              FB.api '/me/picture', (path) =>
-                FBUser.picture = path
-                @set 'FBUser', FBUser
-                @set 'FBloading', false
-            else
+          if @get 'fetchPicture'
+            FB.api '/me/picture', (resp) =>
+              FBUser.picture = resp.data.url
               @set 'FBUser', FBUser
               @set 'FBloading', false
+          else
+            @set 'FBUser', FBUser
+            @set 'FBloading', false
       else
         @set 'FBUser', false
         @set 'FBloading', false
 
   Ember.FacebookView = Ember.View.extend
     classNameBindings: ['className']
+    attributeBindings: []
 
     init: ->
       @_super()
       @setClassName()
-      @attributeBindings.pushObjects attr for attr of this when attr.match(/^data-/)?
+      @attributeBindings.pushObjects(attr for attr of this when attr.match(/^data-/)?)
 
     setClassName: ->
       @set 'className', "fb-#{@type}"

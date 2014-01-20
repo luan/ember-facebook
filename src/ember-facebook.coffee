@@ -65,6 +65,7 @@
         @set 'FBloading', false
 
   Ember.FacebookView = Ember.View.extend
+    attributeBindings: []
     classNameBindings: ['className']
 
     init: ->

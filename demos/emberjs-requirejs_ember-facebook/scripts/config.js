@@ -40,7 +40,7 @@ require(['ember','emberFacebook'],function(){
 	require(["App"], function(App){
 		var app_name = "App";
 		this[app_name] = App = Ember.Application.createWithMixins(App, Ember.Facebook);
-		App.set('appId', '591709020896302');
+		App.set('appId', '');
 	});
 })
 

@@ -1,0 +1,15 @@
+<script id="metamorph-123-start" type="text/x-handlebars">
+
+{{#if App.FBUser}}
+  <div>
+    <img {{bind-attr src="App.FBUser.picture" alt="App.FBUser.name"}} />
+    {{App.FBUser.name}}
+    <a href="#" {{action "logout" target="FB"}}>Logout</a>
+  </div>
+{{else}}
+  {{#view Ember.FacebookView type="login-button" data-size="xlarge"
+                          data-scope="email, offline_access"}}
+    Connect
+  {{/view}}
+{{/if}}
+</script>

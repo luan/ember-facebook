@@ -52,6 +52,7 @@
         FB.api '/me', (user) =>
           FBUser = Ember.Object.create user
           FBUser.set 'accessToken', response.authResponse.accessToken
+          FBUser.set 'expiresIn', response.authResponse.expiresIn
 
           if @get 'fetchPicture'
             FB.api '/me/picture', (resp) =>
